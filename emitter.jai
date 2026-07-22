@@ -18,6 +18,7 @@ emit_registry :: (R: registry) -> string {
     emit_constants(*SB, R);
     emit_types(*SB, R);
     emit_commands(*SB, R);
+    emit_enumerators(*SB, R);
     emit_loader(*SB, R);
 
     return builder_to_string(*SB);
@@ -676,6 +677,92 @@ else {
     #assert false "Unsupported OS for the Vulkan loader";
 }
 DONE
+
+// Emits a `<vkName>Array` wrapper per enumerate command: it runs the two-call
+// idiom and returns the result plus an allocated slice.
+emit_enumerators :: (SB: *String_Builder, R: registry) {
+    append(SB, "#import \"Basic\"; // NewArray\n\n");
+
+    for C: R.Commands {
+        if !C.Required || !is_enumerator_command(C) continue;
+
+        Elem := element_type(C.Params[C.Params.count - 1].Type);
+        IsResult := C.ReturnType.Base == "VkResult";
+
+        print_to_builder(SB, "// Wrapper for `%`: runs the two-call idiom and returns an allocated slice.\n", C.Name);
+        print_to_builder(SB, "%Array :: (", C.Name);
+        for C.Params {
+            if it_index >= C.Params.count - 2 continue;
+            if it_index > 0  append(SB, ", ");
+            Name := ifx it.Name.count > 0 then jai_ident(it.Name) else tprint("a%", it_index);
+            print_to_builder(SB, "%: %", Name, jai_type(it.Type));
+        }
+
+        if IsResult {
+            print_to_builder(SB, ") -> (VkResult, []%) {\n", Elem);
+            print_to_builder(SB, "    count: u32;\n");
+            print_to_builder(SB, "    result := %;\n", enumerator_call(C, "null"));
+            print_to_builder(SB, "    arr: []%;\n", Elem);
+            print_to_builder(SB, "    if result == .SUCCESS {\n");
+            print_to_builder(SB, "        arr = NewArray(count, %);\n", Elem);
+            print_to_builder(SB, "        result = %;\n", enumerator_call(C, "arr.data"));
+            print_to_builder(SB, "    }\n");
+            print_to_builder(SB, "    return result, arr;\n");
+        }
+        else {
+            print_to_builder(SB, ") -> []% {\n", Elem);
+            print_to_builder(SB, "    count: u32;\n");
+            print_to_builder(SB, "    %;\n", enumerator_call(C, "null"));
+            print_to_builder(SB, "    arr := NewArray(count, %);\n", Elem);
+            print_to_builder(SB, "    %;\n", enumerator_call(C, "arr.data"));
+            print_to_builder(SB, "    return arr;\n");
+        }
+        print_to_builder(SB, "}\n\n");
+    }
+}
+
+// Builds `vkEnumerateX(passthrough..., *count, <ArrayArg>)` for one of the two calls.
+enumerator_call :: (C: command, ArrayArg: string) -> string {
+    SB: String_Builder;
+    print_to_builder(*SB, "%(", C.Name);
+    for C.Params {
+        if it_index > 0  append(*SB, ", ");
+        if it_index == C.Params.count - 2       append(*SB, "*count");
+        else if it_index == C.Params.count - 1  append(*SB, ArrayArg);
+        else {
+            Name := ifx it.Name.count > 0 then jai_ident(it.Name) else tprint("a%", it_index);
+            append(*SB, Name);
+        }
+    }
+    append(*SB, ")");
+    return builder_to_string(*SB);
+}
+
+// Strips one level of pointer from an output-array parameter to get its element type.
+element_type :: (T: c_type) -> string {
+    SB: String_Builder;
+    for T.ArrayDims  print_to_builder(*SB, "[%]", it);
+    for 1..T.PtrDepth - 1  append(*SB, "*");
+    append(*SB, jai_base_type(T.Base));
+    return builder_to_string(*SB);
+}
+
+is_enumerator_command :: (C: command) -> bool {
+    if C.Params.count <= 2 return false;
+
+    // vkEnumerate* returns (VkResult, slice); a void vkGet* with the same
+    // count/array tail returns just the slice.
+    IsEnumerate := begins_with(C.Name, "vkEnumerate") && C.ReturnType.Base == "VkResult";
+    IsGetVoid   := begins_with(C.Name, "vkGet")       && C.ReturnType.Base == "void" && C.ReturnType.PtrDepth == 0;
+    if !IsEnumerate && !IsGetVoid return false;
+
+    CountType := C.Params[C.Params.count - 2].Type;
+    ArrayType := C.Params[C.Params.count - 1].Type;
+
+    return
+        CountType.Base == "uint32_t" && CountType.PtrDepth > 0 && !CountType.IsConstPtr &&
+        ArrayType.Base != "void"     && ArrayType.PtrDepth > 0 && !ArrayType.IsConstPtr;
+}
 
 // C array parameters decay to pointers; #c_call rejects fixed-size array arguments.
 jai_param_type :: (T: c_type) -> string {

@@ -38,22 +38,19 @@ main :: () {
     vk_load_instance(instance);
 
     // ---- physical device ----
-    gpu_count: u32;
-    vkEnumeratePhysicalDevices(instance, *gpu_count, null);
-    if gpu_count == 0 {
+    result, gpus := vkEnumeratePhysicalDevicesArray(instance);
+    defer array_free(gpus);
+    if result != .SUCCESS || gpus.count == 0 {
         log_error("No Vulkan physical devices found.");
         return;
     }
-    gpus := NewArray(gpu_count, VkPhysicalDevice);
-    defer array_free(gpus);
-    vkEnumeratePhysicalDevices(instance, *gpu_count, gpus.data);
 
     gpu := gpus[0];
 
     props: VkPhysicalDeviceProperties;
     vkGetPhysicalDeviceProperties(gpu, *props);
 
-    print("\nPhysical device 0 of %:\n", gpu_count);
+    print("\nPhysical device 0 of %:\n", gpus.count);
     print("  name         : %\n", to_string(props.deviceName.data));
     print("  type         : %\n", props.deviceType);
     print("  api version  : %.%.%\n", props.apiVersion >> 22, (props.apiVersion >> 12) & 0x3ff, props.apiVersion & 0xfff);
@@ -69,14 +66,11 @@ main :: () {
     print("  device-local : % MiB\n", total / (1024 * 1024));
 
     // ---- pick a graphics queue family ----
-    family_count: u32;
-    vkGetPhysicalDeviceQueueFamilyProperties(gpu, *family_count, null);
-    families := NewArray(family_count, VkQueueFamilyProperties);
+    families := vkGetPhysicalDeviceQueueFamilyPropertiesArray(gpu);
     defer array_free(families);
-    vkGetPhysicalDeviceQueueFamilyProperties(gpu, *family_count, families.data);
 
     graphics_family: u32 = 0xffff_ffff;
-    for 0..family_count - 1 {
+    for 0..families.count - 1 {
         if families[it].queueFlags & .GRAPHICS_BIT {
             graphics_family = cast(u32) it;
             break;

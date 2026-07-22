@@ -41,6 +41,41 @@ Those work similarly to volk and should be familiar to Vulkan developers.
 
 However, you should only need the 3 functions above in 99% of cases.
 
+## Enumerate/get wrappers
+
+The generated module also includes wrappers for the `vkEnumerate*` and `vkGet*`
+functions that follow the two-call count/array idiom.
+
+Those make use of Jai's context allocator and multiple return values.
+
+You can replace calls of the form:
+```jai
+count1: u32;
+vkEnumerateXXX(inst_or_device, *count1, null);
+array1 := NewArray(count1, Type);
+result := vkEnumerateXXX(inst_or_device, *count1, array1.data);
+
+count2: u32;
+vkGetXXX(inst_or_device, *count2, null);
+array2 := NewArray(count2, Type);
+vkGetXXX(inst_or_device, *count2, array2.data);
+```
+
+With a single call to:
+```jai
+result, array1 := vkEnumerateXXXArray(inst_or_device);
+array2 := vkGetXXXArray(inst_or_device);
+```
+
+The `vkGet*` wrappers return only the slice, since those functions return `void`.
+
+This also lets you override the allocator in the idiomatic Jai way:
+```jai
+result, array := vkEnumerateXXXArray(inst_or_device,, temp);
+```
+
+Credits to [vulkan-jai-bindings](https://github.com/drshapeless/vulkan-jai-binding/) for this idea.
+
 ## Why this project?
 
 ### How is this different from the built-in module
