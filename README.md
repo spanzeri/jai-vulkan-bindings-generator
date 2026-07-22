@@ -80,3 +80,12 @@ Note that this assumes the compiler is on the path.
 
 The latest version of the registry xml can be found in this [Khronos repository](https://github.com/KhronosGroup/Vulkan-Headers/blob/main/registry/vk.xml).
 
+## Other similar projects
+
+I was aware of the Osor bindings when I started this generator, but I wanted something easier to include.
+
+I have since run into other similar projects.
+
+ * [Osor Vulkan](https://codeberg.org/osor_io/osor_vulkan) - Apache 2.0 licensed, but quite popular and mentioned in the compiler docs. Generates multiple files;
+ * [Vulkan JAI Bindings](https://github.com/drshapeless/vulkan-jai-binding) - Multiple file output, but likely a more complete generator;
+
