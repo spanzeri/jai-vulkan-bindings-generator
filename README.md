@@ -2,8 +2,13 @@
 
 This repository contains JAI bindings for Vulkan as well as loading code and a generator.
 
+Note that VMA is also supported, see the VMA section below.
+
+The prebuilt libraries are stored with [Git LFS](https://git-lfs.com), so
+install it before cloning or you will get text pointer files instead.
+
 Usage:
- * Download or copy `vulkan.jai` into your project's modules folder and `#import` it.
+ * Download or copy `Vulkan.jai` into your project's modules folder and `#import` it.
    It declares `#module_parameters`, so it must be imported as a module - it cannot be `#load`-ed;
  * Call the loader functions:
 ```jai
@@ -21,18 +26,8 @@ device: VkDevice;
 vk_load_device(device);
 
 #import "Basic";
-#import "vulkan";
+#import "Vulkan";
 ```
-
-Vulkan code is under Khronos' license (see both the file and vk.xml headers).
-
-For a concrete and compilable example, see: `example/info.jai`.
-
-You can compile and run it with: `jai-linux example/info.jai +Autorun` and it should print some driver/GPU information.
-
-The rest of the code is under a double license (see LICENSE.txt).
-
-TL;DR: attribution is nice, but isn't required and you only need `vulkan.jai` to start using vulkan.
 
 There are some alternatives like `vk_load_instance` if you don't want to load a device
 separately or `vk_load_device_table` for multiple devices.
@@ -76,6 +71,66 @@ result, array := vkEnumerateXXXArray(inst_or_device,, temp);
 
 Credits to [vulkan-jai-bindings](https://github.com/drshapeless/vulkan-jai-binding/) for this idea.
 
+## Examples
+
+For concrete, compilable examples see the `example` folder:
+
+ * `example/info.jai` prints driver and GPU information;
+ * `example/use_vma.jai` additionally creates a VMA allocator.
+
+Both are built by a single metaprogram, from the repository root:
+
+```
+jai-linux example/build.jai
+```
+
+That produces `example/info` and `example/use_vma`, which you can run directly.
+
+The examples also cross-compile to Android. From inside `example`:
+
+```
+jai-linux -import_dir .. info.jai +Android/Toolchain
+```
+
+Note that `-import_dir` has to come before the source file, because the Android
+plugin consumes every argument that follows it. This produces an arm64 shared
+library under `AndroidProject/app/src/main/jniLibs/`. To actually launch on a
+device the program additionally needs an Android entry point:
+
+```jai
+#if OS == .ANDROID  #import "Android"()(main);
+```
+
+## VMA
+
+A [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
+module is included alongside Vulkan. It is optional: if you only want Vulkan,
+copy `Vulkan.jai` and ignore the rest.
+
+To use it, copy the whole `VkMemAlloc` directory into your modules folder and
+`#import "VkMemAlloc";`. It imports `Vulkan`, so both need to be there.
+
+VMA is C++, so the module ships a prebuilt library per platform. Nothing needs
+to sit next to your executable on Linux, macOS or Windows; on Android the `.so`
+goes in the apk like any other native library. The only extra runtime
+dependency is the platform C++ runtime, which is a system library everywhere it
+is needed at all.
+
+The library is built with `VK_NO_PROTOTYPES`, so VMA never links Vulkan
+directly - you must fill in `VmaAllocatorCreateInfo.pVulkanFunctions`. See
+`example/use_vma.jai` for a complete allocator setup.
+
+## Licenses
+
+Vulkan code is under Khronos' license (see both the file and vk.xml headers).
+
+VMA itself is MIT licensed (Copyright (c) 2017-2026 Advanced Micro Devices,
+Inc.), see `src/VulkanMemoryAllocator-<version>/LICENSE.txt`.
+
+The rest of the code is under a double license (see LICENSE.txt).
+
+TL;DR: attribution is nice, but isn't required and you only need `Vulkan.jai` to start using vulkan.
+
 ## Why this project?
 
 ### How is this different from the built-in module
@@ -113,6 +168,23 @@ bin/generator.exe
 
 Note that this assumes the compiler is on the path.
 
+Regenerating the VMA bindings additionally needs:
+
+ * The VMA source, which is not vendored. Download the release matching
+   `SOURCE_PATH` in `vma_generator.jai` and unpack it under `src/`;
+ * A C++ compiler, since the generator also builds the VMA library
+   (clang on Unix, MSVC on Windows). Without the source the Vulkan bindings
+   are still generated and VMA generation is skipped.
+
+To cross-compile the VMA library and bindings for Android, pass `-android`:
+
+```bash
+./bin/generator -android
+```
+
+This needs the Android NDK, found through `ANDROID_NDK_HOME` or
+`$ANDROID_HOME/ndk`. It builds both the `arm64` and `x64` ABIs.
+
 The latest version of the registry xml can be found in this [Khronos repository](https://github.com/KhronosGroup/Vulkan-Headers/blob/main/registry/vk.xml).
 
 ## Other similar projects
@@ -123,4 +195,3 @@ I have since run into other similar projects.
 
  * [Osor Vulkan](https://codeberg.org/osor_io/osor_vulkan) - Apache 2.0 licensed, but quite popular and mentioned in the compiler docs. Generates multiple files;
  * [Vulkan JAI Bindings](https://github.com/drshapeless/vulkan-jai-binding) - Multiple file output, but likely a more complete generator;
-

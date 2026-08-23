@@ -1,5 +1,5 @@
 /*
- * Jai source emitter for: JAI vulkan binding generator.
+ * Binding source emitter for: JAI vulkan binding generator.
  * For license information, see the accompanying: LICENSE.txt file.
  */
 
@@ -20,6 +20,9 @@ emit_registry :: (R: registry) -> string {
     emit_commands(*SB, R);
     emit_enumerators(*SB, R);
     emit_loader(*SB, R);
+
+    // Append basic at the end since that is the convention in JAI
+    append(*SB, "#import \"Basic\";\n\n");
 
     return builder_to_string(*SB);
 }
@@ -135,26 +138,24 @@ emit_external_forward_decls :: (SB: *String_Builder, R: registry) {
     append(SB, "\n");
 }
 
-// Platform/external handle and enum types that are used by value need their real
-// underlying representation. Opaque struct types (used only via pointer) stay `struct {}`.
 external_underlying :: (Name: string) -> string {
     if Name == {
-        case "HWND";      #through;
-        case "HINSTANCE"; #through;
-        case "HMONITOR";  #through;
-        case "HANDLE";    #through;
-        case "LPCWSTR";   #through;
-        case "NvSciSyncObj";     #through;
-        case "NvSciBufObj";      #through;
-        case "NvSciSyncAttrList"; #through;
+        case "HWND";                   #through;
+        case "HINSTANCE";              #through;
+        case "HMONITOR";               #through;
+        case "HANDLE";                 #through;
+        case "LPCWSTR";                #through;
+        case "NvSciSyncObj";           #through;
+        case "NvSciBufObj";            #through;
+        case "NvSciSyncAttrList";      #through;
         case "NvSciBufAttrList";
             return "*void";
 
-        case "DWORD";               #through;
-        case "xcb_window_t";        #through;
-        case "xcb_visualid_t";      #through;
-        case "zx_handle_t";         #through;
-        case "GgpStreamDescriptor"; #through;
+        case "DWORD";                  #through;
+        case "xcb_window_t";           #through;
+        case "xcb_visualid_t";         #through;
+        case "zx_handle_t";            #through;
+        case "GgpStreamDescriptor";    #through;
         case "StdVideoH264ProfileIdc"; #through;
         case "StdVideoH264LevelIdc";   #through;
         case "StdVideoH265ProfileIdc"; #through;
@@ -165,9 +166,9 @@ external_underlying :: (Name: string) -> string {
         case "StdVideoVP9Level";
             return "u32";
 
-        case "Window";    #through;
-        case "VisualID";  #through;
-        case "RROutput";  #through;
+        case "Window";                 #through;
+        case "VisualID";               #through;
+        case "RROutput";               #through;
         case "GgpFrameToken";
             return "u64";
     }
@@ -681,8 +682,6 @@ DONE
 // Emits a `<vkName>Array` wrapper per enumerate command: it runs the two-call
 // idiom and returns the result plus an allocated slice.
 emit_enumerators :: (SB: *String_Builder, R: registry) {
-    append(SB, "#import \"Basic\"; // NewArray\n\n");
-
     for C: R.Commands {
         if !C.Required || !is_enumerator_command(C) continue;
 

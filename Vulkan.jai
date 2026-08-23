@@ -29073,8 +29073,6 @@ vkCmdDispatchGraphIndirectCountAMDX: PFN_vkCmdDispatchGraphIndirectCountAMDX;
 
 }
 
-#import "Basic"; // NewArray
-
 // Wrapper for `vkEnumeratePhysicalDevices`: runs the two-call idiom and returns an allocated slice.
 vkEnumeratePhysicalDevicesArray :: (instance: VkInstance) -> (VkResult, []VkPhysicalDevice) {
     count: u32;
@@ -33415,3 +33413,5 @@ else #if OS == .MACOS || OS == .IOS {
 else {
     #assert false "Unsupported OS for the Vulkan loader";
 }
+#import "Basic";
+

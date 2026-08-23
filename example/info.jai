@@ -8,8 +8,6 @@ Build (cross compile every supported OS, type-check only):
     jai-linux info.jai - cross
 */
 
-#import,file "../vulkan.jai";
-
 main :: () {
     if vk_initialize() != .SUCCESS {
         log_error("Failed to load the Vulkan library.");
@@ -139,4 +137,6 @@ make_version :: (major: u32, minor: u32, patch: u32) -> u32 {
 
     #import "Compiler";
 }
+
+#import "Vulkan";
 
