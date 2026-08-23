@@ -10,6 +10,20 @@
 
 SOURCE_PATH :: "src/VulkanMemoryAllocator-3.4.0";
 
+#if OS == .WINDOWS {
+    // Reads VULKAN_SDK at the time the generator actually runs (not baked in at
+    // generator build time), since the SDK location/version is a property of the
+    // machine running the generator, not the machine that built it.
+    get_vulkan_sdk :: () -> string, bool {
+        VulkanSdk := to_string(Win.getenv("VULKAN_SDK".data));
+        if !VulkanSdk {
+            log_error(" ! ERROR: The VULKAN_SDK environment variable is not set. Install the Vulkan SDK from https://vulkan.lunarg.com/ (its installer sets VULKAN_SDK) and restart your shell.");
+            return "", false;
+        }
+        return VulkanSdk, true;
+    }
+}
+
 // Android is always a cross-target, so the target can't come from #if OS here.
 generate_vma_bindings :: (TargetOs := OS, TargetCpu := CPU) -> bool {
     if !is_directory(SOURCE_PATH) {
@@ -30,6 +44,17 @@ generate_vma_bindings :: (TargetOs := OS, TargetCpu := CPU) -> bool {
         using Options;
 
         array_add(*include_paths, tprint("%/include", SOURCE_PATH));
+        #if OS == .WINDOWS {
+            if TargetOs == .WINDOWS {
+                VulkanSdk, VulkanSdkOk := get_vulkan_sdk();
+                if !VulkanSdkOk return false;
+                // system_include_paths defaults to get_default_system_include_paths()
+                // only when left empty, so seed it with those defaults ourselves
+                // before adding the SDK path.
+                array_add(*system_include_paths, ..get_default_system_include_paths(TargetOs, TargetCpu));
+                array_add(*system_include_paths, tprint("%/Include", VulkanSdk));
+            }
+        }
         array_add(*source_files, "vk_mem_alloc.h");
         array_add(*libraries, Library.{ "libvma", "" });
 
@@ -142,20 +167,23 @@ build_vma_libraries :: (TargetOs: Operating_System_Tag, TargetCpu: CPU_Tag) -> b
             return build_cpp_static_lib(tprint("%/libvma", Directory), "src/vma.cpp", extra=Extra);
 
         case .WINDOWS;
-            Extra :: string.[
+            VulkanSdk, VulkanSdkOk := get_vulkan_sdk();
+            if !VulkanSdkOk return false;
+
+            // Not a constant array (Extra :: ...) like the other platforms, since one
+            // entry depends on the VULKAN_SDK environment variable read above.
+            Extra := string.[
                 #run tprint("-I%/%", SOURCE_PATH, "include"),
                 "/std:c++17",
-                // VMA_CALL_PRE is empty by default, so without this the DLL exports
-                // nothing and no libvma.lib import library is produced.
-                "/DVMA_CALL_PRE=__declspec(dllexport)",
-                // Static CRT, so the DLL carries the C++ runtime instead of
+                // Static CRT, so the library carries the C++ runtime instead of
                 // depending on msvcp140.dll.
                 "/MT",
                 "/EHs-c-",
                 "/GR-",
                 "/D_HAS_EXCEPTIONS=0",
+                tprint("/I%/Include", VulkanSdk),
             ];
-            return build_cpp_dynamic_lib(tprint("%/libvma", Directory), "src/vma.cpp", extra=Extra);
+            return build_cpp_static_lib(tprint("%/libvma", Directory), "src/vma.cpp", extra=Extra);
 
         case .MACOS;
             Extra :: string.[
@@ -198,4 +226,4 @@ build_vma_libraries :: (TargetOs: Operating_System_Tag, TargetCpu: CPU_Tag) -> b
 #import "File_Utilities";
 #import "BuildCpp";
 #import "Android/Toolchain";
-
+#if OS == .WINDOWS Win :: #import "Windows";

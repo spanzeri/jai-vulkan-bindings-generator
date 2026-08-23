@@ -5,6 +5,8 @@ bin/**
 **/.build/**
 /*.o
 /*.obj
+*.exe
+*.pdb
 
 # Example executables (produced by example/build.jai)
 example/info

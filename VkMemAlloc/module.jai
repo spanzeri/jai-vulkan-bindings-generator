@@ -1,6 +1,11 @@
 #if OS == .WINDOWS {
     #load "vma_windows.jai";
-    libvma :: #library "windows/libvma";
+    libvma :: #library,no_dll "windows/libvma";
+    // Built with /MT (static CRT): libcmt.lib covers the C runtime already, but
+    // the C++ runtime support functions (std::mutex/shared_mutex internals,
+    // __std_exception_throw helpers, etc.) live in a separate static lib that
+    // isn't linked by default.
+    #library,system,link_always "libcpmt";
 } else #if OS == .LINUX {
     #load "vma_linux.jai";
     libvma :: #library,no_dll "linux/libvma";
