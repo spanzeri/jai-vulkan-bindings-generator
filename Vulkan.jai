@@ -42,7 +42,7 @@ VK_API_VERSION_1_2 :: #run VK_MAKE_API_VERSION(0, 1, 2, 0);
 VK_API_VERSION_1_3 :: #run VK_MAKE_API_VERSION(0, 1, 3, 0);
 VK_API_VERSION_1_4 :: #run VK_MAKE_API_VERSION(0, 1, 4, 0);
 
-VK_HEADER_VERSION :: 357;
+VK_HEADER_VERSION :: 360;
 VK_HEADER_VERSION_COMPLETE :: #run VK_MAKE_API_VERSION(0, 1, 4, VK_HEADER_VERSION);
 
 VK_MAX_PHYSICAL_DEVICE_NAME_SIZE :: 256;
@@ -932,6 +932,8 @@ VK_NV_COMPUTE_OCCUPANCY_PRIORITY_SPEC_VERSION :: 1;
 VK_NV_COMPUTE_OCCUPANCY_PRIORITY_EXTENSION_NAME :: "VK_NV_compute_occupancy_priority";
 VK_KHR_MAINTENANCE_11_SPEC_VERSION :: 1;
 VK_KHR_MAINTENANCE_11_EXTENSION_NAME :: "VK_KHR_maintenance11";
+VK_EXT_COOPERATIVE_MATRIX_MAINTENANCE_1_SPEC_VERSION :: 1;
+VK_EXT_COOPERATIVE_MATRIX_MAINTENANCE_1_EXTENSION_NAME :: "VK_EXT_cooperative_matrix_maintenance1";
 VK_EXT_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION :: 1;
 VK_EXT_SHADER_SUBGROUP_PARTITIONED_EXTENSION_NAME :: "VK_EXT_shader_subgroup_partitioned";
 VK_KHR_EXTENDED_FLAGS_SPEC_VERSION :: 1;
@@ -946,6 +948,8 @@ VK_ARM_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_SPEC_VERSION :: 1;
 VK_ARM_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_EXTENSION_NAME :: "VK_ARM_data_graph_neural_accelerator_statistics";
 VK_EXT_PRIMITIVE_RESTART_INDEX_SPEC_VERSION :: 1;
 VK_EXT_PRIMITIVE_RESTART_INDEX_EXTENSION_NAME :: "VK_EXT_primitive_restart_index";
+VK_EXT_IMAGE_TILING_CONTROL_SPEC_VERSION :: 1;
+VK_EXT_IMAGE_TILING_CONTROL_EXTENSION_NAME :: "VK_EXT_image_tiling_control";
 VK_NV_COOPERATIVE_MATRIX_DECODE_VECTOR_SPEC_VERSION :: 1;
 VK_NV_COOPERATIVE_MATRIX_DECODE_VECTOR_EXTENSION_NAME :: "VK_NV_cooperative_matrix_decode_vector";
 VK_KHR_XLIB_SURFACE_SPEC_VERSION :: 6;
@@ -3888,6 +3892,9 @@ VkStructureType :: enum s32 {
     PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV :: 1000645001;
     PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR :: 1000657000;
     QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR :: 1000657001;
+    PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT :: 1000659000;
+    PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT :: 1000659001;
+    COOPERATIVE_MATRIX_PROPERTIES_2_EXT :: 1000659002;
     PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT :: 1000662000;
     FORMAT_PROPERTIES_4_KHR :: 1000668000;
     IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR :: 1000668001;
@@ -3904,6 +3911,8 @@ VkStructureType :: enum s32 {
     DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM :: 1000676001;
     PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM :: 1000676002;
     PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT :: 1000678000;
+    PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT :: 1000687000;
+    IMAGE_TILING_CONTROL_CREATE_INFO_EXT :: 1000687001;
     PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV :: 1000689000;
     XLIB_SURFACE_CREATE_INFO_KHR :: 1000004000;
     XCB_SURFACE_CREATE_INFO_KHR :: 1000005000;
@@ -5391,6 +5400,9 @@ VkStructureType :: enum s32 {
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV :: PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV;
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR :: PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR;
     VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR :: QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR;
+    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT :: PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT;
+    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT :: PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT;
+    VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT :: COOPERATIVE_MATRIX_PROPERTIES_2_EXT;
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT :: PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT;
     VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR :: FORMAT_PROPERTIES_4_KHR;
     VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR :: IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
@@ -5407,6 +5419,8 @@ VkStructureType :: enum s32 {
     VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM :: DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM;
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM :: PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM;
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT :: PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT;
+    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT :: PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT;
+    VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT :: IMAGE_TILING_CONTROL_CREATE_INFO_EXT;
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV :: PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV;
     VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR :: XLIB_SURFACE_CREATE_INFO_KHR;
     VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR :: XCB_SURFACE_CREATE_INFO_KHR;
@@ -8430,6 +8444,7 @@ VkDriverId :: enum s32 {
     MESA_KOSMICKRISP :: 28; // Mesa open source project
     MESA_GFXSTREAM :: 29; // Mesa open source project
     APE_SOFT :: 30; // Ape open source project
+    RESERVED_31 :: 31; // Reserved for undisclosed driver project
     AMD_PROPRIETARY_KHR :: 1;
     AMD_OPEN_SOURCE_KHR :: 2;
     MESA_RADV_KHR :: 3;
@@ -8473,6 +8488,7 @@ VkDriverId :: enum s32 {
     VK_DRIVER_ID_MESA_KOSMICKRISP :: MESA_KOSMICKRISP;
     VK_DRIVER_ID_MESA_GFXSTREAM :: MESA_GFXSTREAM;
     VK_DRIVER_ID_APE_SOFT :: APE_SOFT;
+    VK_DRIVER_ID_RESERVED_31 :: RESERVED_31;
     VK_DRIVER_ID_AMD_PROPRIETARY_KHR :: AMD_PROPRIETARY_KHR;
     VK_DRIVER_ID_AMD_OPEN_SOURCE_KHR :: AMD_OPEN_SOURCE_KHR;
     VK_DRIVER_ID_MESA_RADV_KHR :: MESA_RADV_KHR;
@@ -9862,6 +9878,12 @@ VkVideoEncodeFlagBitsKHR :: enum_flags u32 {
     VK_VIDEO_ENCODE_INTRA_REFRESH_BIT_KHR :: INTRA_REFRESH_BIT_KHR;
     VK_VIDEO_ENCODE_WITH_QUANTIZATION_DELTA_MAP_BIT_KHR :: WITH_QUANTIZATION_DELTA_MAP_BIT_KHR;
     VK_VIDEO_ENCODE_WITH_EMPHASIS_MAP_BIT_KHR :: WITH_EMPHASIS_MAP_BIT_KHR;
+}
+
+VkCooperativeMatrixFlagBitsEXT :: enum_flags u32 {
+    EXT :: 0x1;
+
+    VK_COOPERATIVE_MATRIX_SATURATING_ACCUMULATION_BIT_EXT :: EXT;
 }
 
 VkVideoEncodeUsageFlagBitsKHR :: enum_flags u32 {
@@ -11737,6 +11759,16 @@ VkNeuralAcceleratorStatisticsModeARM :: enum s32 {
     VK_NEURAL_ACCELERATOR_STATISTICS_MODE_STATISTICS1_ARM :: STATISTICS1_ARM;
 }
 
+VkImageTilingControlEXT :: enum s32 {
+    DEFAULT_EXT :: 0;
+    MIN_SIZE_EXT :: 1;
+    MAX_PERFORMANCE_EXT :: 2;
+
+    VK_IMAGE_TILING_CONTROL_DEFAULT_EXT :: DEFAULT_EXT;
+    VK_IMAGE_TILING_CONTROL_MIN_SIZE_EXT :: MIN_SIZE_EXT;
+    VK_IMAGE_TILING_CONTROL_MAX_PERFORMANCE_EXT :: MAX_PERFORMANCE_EXT;
+}
+
 ANativeWindow :: struct {}
 
 AHardwareBuffer :: struct {}
@@ -12312,6 +12344,8 @@ VkVideoEncodeAV1RateControlFlagsKHR :: VkVideoEncodeAV1RateControlFlagBitsKHR;
 VkVideoEncodeAV1SuperblockSizeFlagsKHR :: VkVideoEncodeAV1SuperblockSizeFlagBitsKHR;
 
 VkAccessFlags3KHR :: VkAccessFlagBits3KHR;
+
+VkCooperativeMatrixFlagsEXT :: VkCooperativeMatrixFlagBitsEXT;
 
 VkInstance_T :: struct {}
 VkInstance :: *VkInstance_T;
@@ -24265,6 +24299,29 @@ VkCooperativeMatrixPropertiesKHR :: struct {
     #overlay(sType) _base: VkBaseOutStructure;
 }
 
+VkPhysicalDeviceCooperativeMatrixInfo2EXT :: struct {
+    sType: VkStructureType = .VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT;
+    pNext: *void;
+    scope: VkScopeKHR;
+    invocations: u32;
+    subgroupSize: u32;
+    flags: VkCooperativeMatrixFlagsEXT;
+    #overlay(sType) _base: VkBaseInStructure;
+}
+
+VkCooperativeMatrixProperties2EXT :: struct {
+    sType: VkStructureType = .VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT;
+    pNext: *void;
+    MGranularity: u32;
+    NGranularity: u32;
+    KGranularity: u32;
+    AType: VkComponentTypeKHR;
+    BType: VkComponentTypeKHR;
+    CType: VkComponentTypeKHR;
+    ResultType: VkComponentTypeKHR;
+    #overlay(sType) _base: VkBaseOutStructure;
+}
+
 VkPhysicalDeviceCooperativeMatrixPropertiesKHR :: struct {
     sType: VkStructureType = .VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR;
     pNext: *void;
@@ -26506,6 +26563,20 @@ VkDataGraphPipelineOpticalFlowDispatchInfoARM :: struct {
     #overlay(sType) _base: VkBaseOutStructure;
 }
 
+VkPhysicalDeviceImageTilingControlFeaturesEXT :: struct {
+    sType: VkStructureType = .VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT;
+    pNext: *void;
+    imageTilingControl: VkBool32;
+    #overlay(sType) _base: VkBaseOutStructure;
+}
+
+VkImageTilingControlCreateInfoEXT :: struct {
+    sType: VkStructureType = .VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT;
+    pNext: *void;
+    tilingControl: VkImageTilingControlEXT;
+    #overlay(sType) _base: VkBaseInStructure;
+}
+
 VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT :: struct {
     sType: VkStructureType = .VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT;
     pNext: *void;
@@ -26513,6 +26584,17 @@ VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT :: struct {
     shaderFloat6: VkBool32;
     shaderFloat8UnsignedE8M0: VkBool32;
     shaderMXInt8: VkBool32;
+    #overlay(sType) _base: VkBaseOutStructure;
+}
+
+VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT :: struct {
+    sType: VkStructureType = .VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT;
+    pNext: *void;
+    cooperativeMatrixProperties2: VkBool32;
+    cooperativeMatrixReductions: VkBool32;
+    cooperativeMatrixConversions: VkBool32;
+    cooperativeMatrixPerElementOperations: VkBool32;
+    cooperativeMatrixGetCoordinate: VkBool32;
     #overlay(sType) _base: VkBaseOutStructure;
 }
 
@@ -28490,6 +28572,9 @@ vkGetPastPresentationTimingEXT: PFN_vkGetPastPresentationTimingEXT;
 PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR :: #type (physicalDevice: VkPhysicalDevice, pPropertyCount: *u32, pProperties: *VkCooperativeMatrixPropertiesKHR) -> VkResult #c_call;
 vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR: PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR;
 
+PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT :: #type (physicalDevice: VkPhysicalDevice, pCooperativeMatrixInfo: *VkPhysicalDeviceCooperativeMatrixInfo2EXT, pPropertyCount: *u32, pProperties: *VkCooperativeMatrixProperties2EXT) -> VkResult #c_call;
+vkGetPhysicalDeviceCooperativeMatrixProperties2EXT: PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT;
+
 PFN_vkCreateGpaSessionAMD :: #type (device: VkDevice, pCreateInfo: *VkGpaSessionCreateInfoAMD, pAllocator: *VkAllocationCallbacks, pGpaSession: *VkGpaSessionAMD) -> VkResult #c_call;
 vkCreateGpaSessionAMD: PFN_vkCreateGpaSessionAMD;
 
@@ -30222,6 +30307,7 @@ load_instance_procs :: (instance: VkInstance, load: PFN_vkGetInstanceProcAddr) {
     vkGetDrmDisplayEXT = xx load(instance, "vkGetDrmDisplayEXT");
     vkGetPhysicalDeviceOpticalFlowImageFormatsNV = xx load(instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
     vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = xx load(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
+    vkGetPhysicalDeviceCooperativeMatrixProperties2EXT = xx load(instance, "vkGetPhysicalDeviceCooperativeMatrixProperties2EXT");
     vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = xx load(instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
     vkGetPhysicalDeviceCooperativeVectorPropertiesNV = xx load(instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV");
     vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM = xx load(instance, "vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM");
@@ -32587,6 +32673,7 @@ clear_procs :: () {
     vkGetDrmDisplayEXT = null;
     vkGetPhysicalDeviceOpticalFlowImageFormatsNV = null;
     vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = null;
+    vkGetPhysicalDeviceCooperativeMatrixProperties2EXT = null;
     vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = null;
     vkGetPhysicalDeviceCooperativeVectorPropertiesNV = null;
     vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM = null;
