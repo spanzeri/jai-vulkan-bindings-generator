@@ -28,6 +28,23 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
     VK_USE_PLATFORM_XLIB_XRANDR_EXT := OS == .LINUX
 );
 
+VK_MAKE_API_VERSION :: inline (variant: u32, major: u32, minor: u32, patch: u32) -> u32 {
+    return (variant << 29) | (major << 22) | (minor << 12) | patch;
+}
+
+VK_API_VERSION_VARIANT :: inline (version: u32) -> u32 { return (version >> 29);         }
+VK_API_VERSION_MAJOR   :: inline (version: u32) -> u32 { return (version >> 22) &  0x7F; }
+VK_API_VERSION_MINOR   :: inline (version: u32) -> u32 { return (version >> 12) & 0x3FF; }
+VK_API_VERSION_PATCH   :: inline (version: u32) -> u32 { return (version >>  0) & 0xFFF; }
+VK_API_VERSION_1_0 :: #run VK_MAKE_API_VERSION(0, 1, 0, 0);
+VK_API_VERSION_1_1 :: #run VK_MAKE_API_VERSION(0, 1, 1, 0);
+VK_API_VERSION_1_2 :: #run VK_MAKE_API_VERSION(0, 1, 2, 0);
+VK_API_VERSION_1_3 :: #run VK_MAKE_API_VERSION(0, 1, 3, 0);
+VK_API_VERSION_1_4 :: #run VK_MAKE_API_VERSION(0, 1, 4, 0);
+
+VK_HEADER_VERSION :: 357;
+VK_HEADER_VERSION_COMPLETE :: #run VK_MAKE_API_VERSION(0, 1, 4, VK_HEADER_VERSION);
+
 VK_MAX_PHYSICAL_DEVICE_NAME_SIZE :: 256;
 VK_UUID_SIZE :: 16;
 VK_LUID_SIZE :: 8;

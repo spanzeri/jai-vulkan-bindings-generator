@@ -4,50 +4,57 @@
  */
 
 registry :: struct {
-    Types:        [..]vk_type;
-    Enums:        [..]vk_enum;
-    Commands:     [..]command;
-    Constants:    [..]enum_value;
+    HeaderVersion:  int;
+    ApiVersions:    [..]api_version;
+    Types:          [..]vk_type;
+    Enums:          [..]vk_enum;
+    Commands:       [..]command;
+    Constants:      [..]enum_value;
 
-    //            maps
-    TypeIndex:    Table(string, int);
-    EnumIndex:    Table(string, int);
-    CommandIndex: Table(string, int);
-    SeenEnumName: Table(string, bool);
+    //              maps
+    TypeIndex:      Table(string, int);
+    EnumIndex:      Table(string, int);
+    CommandIndex:   Table(string, int);
+    SeenEnumName:   Table(string, bool);
 
-    Platforms:    Table(string, string);
-    VendorTags:   [..]string;
+    Platforms:      Table(string, string);
+    VendorTags:     [..]string;
 
-    Copyright:    string;
+    Copyright:      string;
+}
+
+api_version :: struct {
+    Major: int;
+    Minor: int;
 }
 
 vk_type :: struct {
-    Name:         string;
-    Category:     type_category;
-    Alias:        string;
-    Api:          string;
-    Platform:     string;
-    Requires:     string;
-    Comment:      string;
-    Required:     bool;
+    Name:           string;
+    Category:       type_category;
+    Alias:          string;
+    Api:            string;
+    Platform:       string;
+    Requires:       string;
+    Comment:        string;
+    Required:       bool;
 
     // handle information
-    Dispatchable: bool;
-    HandleParent: string;
-    ObjectType: string;
+    Dispatchable:   bool;
+    HandleParent:   string;
+    ObjectType:     string;
 
     // basetype
-    BaseType:     string;
+    BaseType:       string;
 
     // bitmask
-    FlagBits:     string;
-    Flag64:       bool;
+    FlagBits:       string;
+    Flag64:         bool;
 
     // struct/union
-    Members:      [..]member;
+    Members:        [..]member;
 
     // func   pointers
-    ReturnType:   c_type;
+    ReturnType:     c_type;
 }
 
 type_category :: enum {
@@ -390,8 +397,14 @@ process_types :: (Types: xml_node, R: *registry) {
                 }
                 push_type(T, R);
 
-            case "include"; case "define";
+            case "include";
                 // Skipped: includes are C headers; defines are hand-written in the emit prelude.
+
+            case "define";
+                if xml_get_children_content(it, "name", "") == "VK_HEADER_VERSION" {
+                    V, Ok := to_integer(trim(define_body(it), " \t\r\n"));
+                    if Ok R.HeaderVersion = V;
+                }
 
             case "";
 
@@ -399,6 +412,18 @@ process_types :: (Types: xml_node, R: *registry) {
                 assert(false, "Unhandled <type> category: '%'", Category);
         }
     }
+}
+
+define_body :: (Node: *xml_node) -> string {
+    SB: String_Builder;
+
+    SeenName := false;
+    for Node.Children {
+        if it.Tag == "name" { SeenName = true; continue; }
+        if SeenName && xml_is_text(it)  append(*SB, it.Text);
+    }
+
+    return builder_to_string(*SB,, temp);
 }
 
 parse_member :: (Node: xml_node) -> member {
@@ -565,6 +590,7 @@ process_features_extensions :: (Root: xml_node, R: *registry) {
     defer array_free(Feats);
     for Feats {
         if !is_api_compatible(it) continue;
+        record_api_version(it, R);
         process_require_block(it, "", "", R);
     }
 
@@ -588,6 +614,17 @@ process_features_extensions :: (Root: xml_node, R: *registry) {
         if PFound Protect = PVal;
         process_require_block(it, xml_get_attribute(it, "number", ""), Protect, R);
     }
+}
+
+record_api_version :: (Node: *xml_node, R: *registry) {
+    if !begins_with(xml_get_attribute(Node, "name", ""), "VK_VERSION_") return;
+    Number := xml_get_attribute(Node, "number", "");
+    Dot    := find_index_from_left(Number, #char ".");
+
+    if Dot == -1 return;
+    Major, OkMajor := to_integer(slice(Number, 0, Dot));
+    Minor, OkMinor := to_integer(slice(Number, Dot + 1, Number.count - Dot - 1));
+    if OkMajor && OkMinor array_add(*R.ApiVersions, .{ Major, Minor });
 }
 
 process_require_block :: (Container: xml_node, ExtNumber: string, Platform: string, R: *registry) {

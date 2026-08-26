@@ -22,6 +22,8 @@ SOURCE_PATH :: "src/VulkanMemoryAllocator-3.4.0";
         }
         return VulkanSdk, true;
     }
+} else {
+    get_vulkan_sdk :: () -> string, bool { return "", false; }
 }
 
 // Android is always a cross-target, so the target can't come from #if OS here.

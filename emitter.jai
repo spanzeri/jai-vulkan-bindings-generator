@@ -15,6 +15,7 @@ emit_registry :: (R: registry) -> string {
     append(*SB, "// See: https://github.com/spanzeri/jai-vulkan-bindings-generator\n\n");
 
     emit_module_parameters(*SB, R);
+    emit_version(*SB, R);
     emit_constants(*SB, R);
     emit_types(*SB, R);
     emit_commands(*SB, R);
@@ -42,6 +43,37 @@ emit_module_parameters :: (SB: *String_Builder, R: registry) {
     }
     append(SB, ");\n\n");
 }
+
+emit_version :: (SB: *String_Builder, R: registry) {
+    append(SB, VERSION_HELPERS);
+
+    Major, Minor := 0;
+    for R.ApiVersions {
+        print_to_builder(SB, "VK_API_VERSION_%1_%2 :: #run VK_MAKE_API_VERSION(0, %1, %2, 0);\n", it.Major, it.Minor);
+        if it.Major > Major || (it.Major == Major && it.Minor > Minor) {
+            Major = it.Major;
+            Minor = it.Minor;
+        }
+    }
+
+    print_to_builder(SB, "\nVK_HEADER_VERSION :: %;", R.HeaderVersion);
+    print_to_builder(
+        SB,
+        "\nVK_HEADER_VERSION_COMPLETE :: #run VK_MAKE_API_VERSION(0, %1, %2, VK_HEADER_VERSION);\n\n",
+        Major, Minor,
+    );
+}
+
+VERSION_HELPERS :: #string DONE
+VK_MAKE_API_VERSION :: inline (variant: u32, major: u32, minor: u32, patch: u32) -> u32 {
+    return (variant << 29) | (major << 22) | (minor << 12) | patch;
+}
+
+VK_API_VERSION_VARIANT :: inline (version: u32) -> u32 { return (version >> 29);         }
+VK_API_VERSION_MAJOR   :: inline (version: u32) -> u32 { return (version >> 22) &  0x7F; }
+VK_API_VERSION_MINOR   :: inline (version: u32) -> u32 { return (version >> 12) & 0x3FF; }
+VK_API_VERSION_PATCH   :: inline (version: u32) -> u32 { return (version >>  0) & 0xFFF; }
+DONE;
 
 platform_default_expr :: (Protect: string) -> string {
     if Protect == {
