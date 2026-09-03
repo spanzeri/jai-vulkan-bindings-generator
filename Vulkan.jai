@@ -29196,6 +29196,18 @@ vkGetPhysicalDeviceQueueFamilyPropertiesArray :: (physicalDevice: VkPhysicalDevi
     return arr;
 }
 
+// Wrapper for `vkEnumerateInstanceLayerProperties`: runs the two-call idiom and returns an allocated slice.
+vkEnumerateInstanceLayerPropertiesArray :: () -> (VkResult, []VkLayerProperties) {
+    count: u32;
+    result := vkEnumerateInstanceLayerProperties(*count, null);
+    arr: []VkLayerProperties;
+    if result == .SUCCESS {
+        arr = NewArray(count, VkLayerProperties);
+        result = vkEnumerateInstanceLayerProperties(*count, arr.data);
+    }
+    return result, arr;
+}
+
 // Wrapper for `vkEnumerateInstanceExtensionProperties`: runs the two-call idiom and returns an allocated slice.
 vkEnumerateInstanceExtensionPropertiesArray :: (pLayerName: *u8) -> (VkResult, []VkExtensionProperties) {
     count: u32;
@@ -29352,15 +29364,6 @@ vkGetQueueCheckpointDataNVArray :: (queue: VkQueue) -> []VkCheckpointDataNV {
     vkGetQueueCheckpointDataNV(queue, *count, null);
     arr := NewArray(count, VkCheckpointDataNV);
     vkGetQueueCheckpointDataNV(queue, *count, arr.data);
-    return arr;
-}
-
-// Wrapper for `vkGetAccelerationStructureBuildSizesKHR`: runs the two-call idiom and returns an allocated slice.
-vkGetAccelerationStructureBuildSizesKHRArray :: (device: VkDevice, buildType: VkAccelerationStructureBuildTypeKHR, pBuildInfo: *VkAccelerationStructureBuildGeometryInfoKHR) -> []VkAccelerationStructureBuildSizesInfoKHR {
-    count: u32;
-    vkGetAccelerationStructureBuildSizesKHR(device, buildType, pBuildInfo, *count, null);
-    arr := NewArray(count, VkAccelerationStructureBuildSizesInfoKHR);
-    vkGetAccelerationStructureBuildSizesKHR(device, buildType, pBuildInfo, *count, arr.data);
     return arr;
 }
 

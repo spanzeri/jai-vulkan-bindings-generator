@@ -779,7 +779,7 @@ element_type :: (T: c_type) -> string {
 }
 
 is_enumerator_command :: (C: command) -> bool {
-    if C.Params.count <= 2 return false;
+    if C.Params.count < 2 return false;
 
     // vkEnumerate* returns (VkResult, slice); a void vkGet* with the same
     // count/array tail returns just the slice.
@@ -791,8 +791,8 @@ is_enumerator_command :: (C: command) -> bool {
     ArrayType := C.Params[C.Params.count - 1].Type;
 
     return
-        CountType.Base == "uint32_t" && CountType.PtrDepth > 0 && !CountType.IsConstPtr &&
-        ArrayType.Base != "void"     && ArrayType.PtrDepth > 0 && !ArrayType.IsConstPtr;
+        CountType.Base == "uint32_t" && CountType.PtrDepth > 0 && !CountType.IsConst &&
+        ArrayType.Base != "void"     && ArrayType.PtrDepth > 0 && !ArrayType.IsConst;
 }
 
 // C array parameters decay to pointers; #c_call rejects fixed-size array arguments.
