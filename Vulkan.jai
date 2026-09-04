@@ -12362,115 +12362,115 @@ VkQueue :: *VkQueue_T;
 VkCommandBuffer_T :: struct {}
 VkCommandBuffer :: *VkCommandBuffer_T;
 
-VkDeviceMemory :: u64;
+VkDeviceMemory :: #type,distinct u64;
 
-VkCommandPool :: u64;
+VkCommandPool :: #type,distinct u64;
 
-VkBuffer :: u64;
+VkBuffer :: #type,distinct u64;
 
-VkBufferView :: u64;
+VkBufferView :: #type,distinct u64;
 
-VkImage :: u64;
+VkImage :: #type,distinct u64;
 
-VkImageView :: u64;
+VkImageView :: #type,distinct u64;
 
-VkShaderModule :: u64;
+VkShaderModule :: #type,distinct u64;
 
-VkPipeline :: u64;
+VkPipeline :: #type,distinct u64;
 
-VkPipelineLayout :: u64;
+VkPipelineLayout :: #type,distinct u64;
 
-VkSampler :: u64;
+VkSampler :: #type,distinct u64;
 
-VkDescriptorSet :: u64;
+VkDescriptorSet :: #type,distinct u64;
 
-VkDescriptorSetLayout :: u64;
+VkDescriptorSetLayout :: #type,distinct u64;
 
-VkDescriptorPool :: u64;
+VkDescriptorPool :: #type,distinct u64;
 
-VkFence :: u64;
+VkFence :: #type,distinct u64;
 
-VkSemaphore :: u64;
+VkSemaphore :: #type,distinct u64;
 
-VkEvent :: u64;
+VkEvent :: #type,distinct u64;
 
-VkQueryPool :: u64;
+VkQueryPool :: #type,distinct u64;
 
-VkFramebuffer :: u64;
+VkFramebuffer :: #type,distinct u64;
 
-VkRenderPass :: u64;
+VkRenderPass :: #type,distinct u64;
 
-VkPipelineCache :: u64;
+VkPipelineCache :: #type,distinct u64;
 
-VkPipelineBinaryKHR :: u64;
+VkPipelineBinaryKHR :: #type,distinct u64;
 
-VkIndirectCommandsLayoutNV :: u64;
+VkIndirectCommandsLayoutNV :: #type,distinct u64;
 
-VkIndirectCommandsLayoutEXT :: u64;
+VkIndirectCommandsLayoutEXT :: #type,distinct u64;
 
-VkIndirectExecutionSetEXT :: u64;
+VkIndirectExecutionSetEXT :: #type,distinct u64;
 
-VkDescriptorUpdateTemplate :: u64;
+VkDescriptorUpdateTemplate :: #type,distinct u64;
 
 VkDescriptorUpdateTemplateKHR :: VkDescriptorUpdateTemplate;
 
-VkSamplerYcbcrConversion :: u64;
+VkSamplerYcbcrConversion :: #type,distinct u64;
 
 VkSamplerYcbcrConversionKHR :: VkSamplerYcbcrConversion;
 
-VkValidationCacheEXT :: u64;
+VkValidationCacheEXT :: #type,distinct u64;
 
-VkAccelerationStructureKHR :: u64;
+VkAccelerationStructureKHR :: #type,distinct u64;
 
-VkAccelerationStructureNV :: u64;
+VkAccelerationStructureNV :: #type,distinct u64;
 
-VkPerformanceConfigurationINTEL :: u64;
+VkPerformanceConfigurationINTEL :: #type,distinct u64;
 
-VkBufferCollectionFUCHSIA :: u64;
+VkBufferCollectionFUCHSIA :: #type,distinct u64;
 
-VkDeferredOperationKHR :: u64;
+VkDeferredOperationKHR :: #type,distinct u64;
 
-VkPrivateDataSlot :: u64;
+VkPrivateDataSlot :: #type,distinct u64;
 
 VkPrivateDataSlotEXT :: VkPrivateDataSlot;
 
-VkCuModuleNVX :: u64;
+VkCuModuleNVX :: #type,distinct u64;
 
-VkCuFunctionNVX :: u64;
+VkCuFunctionNVX :: #type,distinct u64;
 
-VkOpticalFlowSessionNV :: u64;
+VkOpticalFlowSessionNV :: #type,distinct u64;
 
-VkMicromapEXT :: u64;
+VkMicromapEXT :: #type,distinct u64;
 
-VkShaderEXT :: u64;
+VkShaderEXT :: #type,distinct u64;
 
-VkTensorARM :: u64;
+VkTensorARM :: #type,distinct u64;
 
-VkTensorViewARM :: u64;
+VkTensorViewARM :: #type,distinct u64;
 
-VkDataGraphPipelineSessionARM :: u64;
+VkDataGraphPipelineSessionARM :: #type,distinct u64;
 
-VkShaderInstrumentationARM :: u64;
+VkShaderInstrumentationARM :: #type,distinct u64;
 
-VkGpaSessionAMD :: u64;
+VkGpaSessionAMD :: #type,distinct u64;
 
-VkDisplayKHR :: u64;
+VkDisplayKHR :: #type,distinct u64;
 
-VkDisplayModeKHR :: u64;
+VkDisplayModeKHR :: #type,distinct u64;
 
-VkSurfaceKHR :: u64;
+VkSurfaceKHR :: #type,distinct u64;
 
-VkSwapchainKHR :: u64;
+VkSwapchainKHR :: #type,distinct u64;
 
-VkDebugReportCallbackEXT :: u64;
+VkDebugReportCallbackEXT :: #type,distinct u64;
 
-VkDebugUtilsMessengerEXT :: u64;
+VkDebugUtilsMessengerEXT :: #type,distinct u64;
 
-VkVideoSessionKHR :: u64;
+VkVideoSessionKHR :: #type,distinct u64;
 
-VkVideoSessionParametersKHR :: u64;
+VkVideoSessionParametersKHR :: #type,distinct u64;
 
-VkSemaphoreSciSyncPoolNV :: u64;
+VkSemaphoreSciSyncPoolNV :: #type,distinct u64;
 
 VkDeviceCreateFlagBits :: enum s32 {}
 
@@ -22699,9 +22699,9 @@ VkBufferCollectionConstraintsInfoFUCHSIA :: struct {
     #overlay(sType) _base: VkBaseInStructure;
 }
 
-VkCudaModuleNV :: u64;
+VkCudaModuleNV :: #type,distinct u64;
 
-VkCudaFunctionNV :: u64;
+VkCudaFunctionNV :: #type,distinct u64;
 
 VkCudaModuleCreateInfoNV :: struct {
     sType: VkStructureType = .VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV;

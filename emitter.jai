@@ -305,7 +305,7 @@ emit_handle :: (SB: *String_Builder, T: vk_type) {
         print_to_builder(SB, "%1_T :: struct {}\n%1 :: *%1_T;\n\n", T.Name);
     }
     else {
-        print_to_builder(SB, "% :: u64;\n\n", T.Name);
+        print_to_builder(SB, "% :: #type,distinct u64;\n\n", T.Name);
     }
 }
 
