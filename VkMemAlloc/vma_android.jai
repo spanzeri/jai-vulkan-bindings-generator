@@ -52,8 +52,6 @@ VmaAllocatorCreateFlagBits :: enum_flags u32 {
 
     KHR_EXTERNAL_MEMORY_WIN32_BIT  :: 0x200;
 
-    FLAG_BITS_MAX_ENUM             :: 0x7fffffff;
-
     VMA_ALLOCATOR_CREATE_EXTERNALLY_SYNCHRONIZED_BIT    :: EXTERNALLY_SYNCHRONIZED_BIT;
 
     VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT   :: KHR_DEDICATED_ALLOCATION_BIT;
@@ -73,12 +71,10 @@ VmaAllocatorCreateFlagBits :: enum_flags u32 {
     VMA_ALLOCATOR_CREATE_KHR_MAINTENANCE5_BIT           :: KHR_MAINTENANCE5_BIT;
 
     VMA_ALLOCATOR_CREATE_KHR_EXTERNAL_MEMORY_WIN32_BIT  :: KHR_EXTERNAL_MEMORY_WIN32_BIT;
-
-    VMA_ALLOCATOR_CREATE_FLAG_BITS_MAX_ENUM             :: FLAG_BITS_MAX_ENUM;
 }
 
 /// See #VmaAllocatorCreateFlagBits.
-VmaAllocatorCreateFlags :: VkFlags;
+VmaAllocatorCreateFlags :: VmaAllocatorCreateFlagBits;
 
 /// \brief Intended usage of the allocated memory.
 VmaMemoryUsage :: enum u32 {
@@ -102,8 +98,6 @@ VmaMemoryUsage :: enum u32 {
 
     AUTO_PREFER_HOST     :: 9;
 
-    MAX_ENUM             :: 2147483647;
-
     VMA_MEMORY_USAGE_UNKNOWN              :: UNKNOWN;
 
     VMA_MEMORY_USAGE_GPU_ONLY             :: GPU_ONLY;
@@ -123,8 +117,6 @@ VmaMemoryUsage :: enum u32 {
     VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE   :: AUTO_PREFER_DEVICE;
 
     VMA_MEMORY_USAGE_AUTO_PREFER_HOST     :: AUTO_PREFER_HOST;
-
-    VMA_MEMORY_USAGE_MAX_ENUM             :: MAX_ENUM;
 }
 
 /// Flags to be passed as VmaAllocationCreateInfo::flags.
@@ -163,8 +155,6 @@ VmaAllocationCreateFlagBits :: enum_flags u32 {
 
     STRATEGY_MASK                          :: 0x70000;
 
-    FLAG_BITS_MAX_ENUM                     :: 0x7fffffff;
-
     VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT                   :: DEDICATED_MEMORY_BIT;
 
     VMA_ALLOCATION_CREATE_NEVER_ALLOCATE_BIT                     :: NEVER_ALLOCATE_BIT;
@@ -198,12 +188,10 @@ VmaAllocationCreateFlagBits :: enum_flags u32 {
     VMA_ALLOCATION_CREATE_STRATEGY_FIRST_FIT_BIT                 :: STRATEGY_FIRST_FIT_BIT;
 
     VMA_ALLOCATION_CREATE_STRATEGY_MASK                          :: STRATEGY_MASK;
-
-    VMA_ALLOCATION_CREATE_FLAG_BITS_MAX_ENUM                     :: FLAG_BITS_MAX_ENUM;
 }
 
 /// See #VmaAllocationCreateFlagBits.
-VmaAllocationCreateFlags :: VkFlags;
+VmaAllocationCreateFlags :: VmaAllocationCreateFlagBits;
 
 /// Flags to be passed as VmaPoolCreateInfo::flags.
 VmaPoolCreateFlagBits :: enum_flags u32 {
@@ -213,19 +201,15 @@ VmaPoolCreateFlagBits :: enum_flags u32 {
 
     ALGORITHM_MASK                      :: 0x4;
 
-    FLAG_BITS_MAX_ENUM                  :: 0x7fffffff;
-
     VMA_POOL_CREATE_IGNORE_BUFFER_IMAGE_GRANULARITY_BIT :: IGNORE_BUFFER_IMAGE_GRANULARITY_BIT;
 
     VMA_POOL_CREATE_LINEAR_ALGORITHM_BIT                :: LINEAR_ALGORITHM_BIT;
 
     VMA_POOL_CREATE_ALGORITHM_MASK                      :: ALGORITHM_MASK;
-
-    VMA_POOL_CREATE_FLAG_BITS_MAX_ENUM                  :: FLAG_BITS_MAX_ENUM;
 }
 
 /// Flags to be passed as VmaPoolCreateInfo::flags. See #VmaPoolCreateFlagBits.
-VmaPoolCreateFlags :: VkFlags;
+VmaPoolCreateFlags :: VmaPoolCreateFlagBits;
 
 /// Flags to be passed as VmaDefragmentationInfo::flags.
 VmaDefragmentationFlagBits :: enum_flags u32 {
@@ -239,8 +223,6 @@ VmaDefragmentationFlagBits :: enum_flags u32 {
 
     ALGORITHM_MASK          :: 0xf;
 
-    BITS_MAX_ENUM           :: 0x7fffffff;
-
     VMA_DEFRAGMENTATION_FLAG_ALGORITHM_FAST_BIT      :: ALGORITHM_FAST_BIT;
 
     VMA_DEFRAGMENTATION_FLAG_ALGORITHM_BALANCED_BIT  :: ALGORITHM_BALANCED_BIT;
@@ -250,12 +232,10 @@ VmaDefragmentationFlagBits :: enum_flags u32 {
     VMA_DEFRAGMENTATION_FLAG_ALGORITHM_EXTENSIVE_BIT :: ALGORITHM_EXTENSIVE_BIT;
 
     VMA_DEFRAGMENTATION_FLAG_ALGORITHM_MASK          :: ALGORITHM_MASK;
-
-    VMA_DEFRAGMENTATION_FLAG_BITS_MAX_ENUM           :: BITS_MAX_ENUM;
 }
 
 /// See #VmaDefragmentationFlagBits.
-VmaDefragmentationFlags :: VkFlags;
+VmaDefragmentationFlags :: VmaDefragmentationFlagBits;
 
 /// Operation performed on single defragmentation move. See structure #VmaDefragmentationMove.
 VmaDefragmentationMoveOperation :: enum u32 {
@@ -278,17 +258,13 @@ VmaVirtualBlockCreateFlagBits :: enum_flags u32 {
 
     ALGORITHM_MASK       :: 0x1;
 
-    FLAG_BITS_MAX_ENUM   :: 0x7fffffff;
-
     VMA_VIRTUAL_BLOCK_CREATE_LINEAR_ALGORITHM_BIT :: LINEAR_ALGORITHM_BIT;
 
     VMA_VIRTUAL_BLOCK_CREATE_ALGORITHM_MASK       :: ALGORITHM_MASK;
-
-    VMA_VIRTUAL_BLOCK_CREATE_FLAG_BITS_MAX_ENUM   :: FLAG_BITS_MAX_ENUM;
 }
 
 /// Flags to be passed as VmaVirtualBlockCreateInfo::flags. See #VmaVirtualBlockCreateFlagBits.
-VmaVirtualBlockCreateFlags :: VkFlags;
+VmaVirtualBlockCreateFlags :: VmaVirtualBlockCreateFlagBits;
 
 /// Flags to be passed as VmaVirtualAllocationCreateInfo::flags.
 VmaVirtualAllocationCreateFlagBits :: enum_flags u32 {
@@ -302,8 +278,6 @@ VmaVirtualAllocationCreateFlagBits :: enum_flags u32 {
 
     STRATEGY_MASK           :: 0x70000;
 
-    FLAG_BITS_MAX_ENUM      :: 0x7fffffff;
-
     VMA_VIRTUAL_ALLOCATION_CREATE_UPPER_ADDRESS_BIT       :: UPPER_ADDRESS_BIT;
 
     VMA_VIRTUAL_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT :: STRATEGY_MIN_MEMORY_BIT;
@@ -313,12 +287,10 @@ VmaVirtualAllocationCreateFlagBits :: enum_flags u32 {
     VMA_VIRTUAL_ALLOCATION_CREATE_STRATEGY_MIN_OFFSET_BIT :: STRATEGY_MIN_OFFSET_BIT;
 
     VMA_VIRTUAL_ALLOCATION_CREATE_STRATEGY_MASK           :: STRATEGY_MASK;
-
-    VMA_VIRTUAL_ALLOCATION_CREATE_FLAG_BITS_MAX_ENUM      :: FLAG_BITS_MAX_ENUM;
 }
 
 /// Flags to be passed as VmaVirtualAllocationCreateInfo::flags. See #VmaVirtualAllocationCreateFlagBits.
-VmaVirtualAllocationCreateFlags :: VkFlags;
+VmaVirtualAllocationCreateFlags :: VmaVirtualAllocationCreateFlagBits;
 
 VmaAllocator_T :: struct {}
 /** \struct VmaAllocator
@@ -2490,4 +2462,4 @@ vmaFreeStatsString :: (allocator: VmaAllocator, pStatsString: *u8) -> void #fore
 }
 
 #scope_file;
-#import "Vulkan";
+#import,file "../Vulkan.jai";

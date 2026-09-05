@@ -84,7 +84,7 @@ generate_vma_bindings :: (TargetOs := OS, TargetCpu := CPU) -> bool {
 
         footer = tprint(#string __imports
 #scope_file;
-#import "Vulkan";
+#import,file "../Vulkan.jai";
         __imports);
     }
 
@@ -133,7 +133,38 @@ vma_macro_to_enum :: (Decl: *Declaration) -> string {
     return "";
 }
 
+// VMA spells every flag type as a "VmaXFlagBits" enum plus a separate
+// "typedef VkFlags VmaXFlags" that all the structs and functions actually use.
+// Retarget each such typedef at its enum so the alias carries the flag type
+// rather than a bare u32 (this is what the registry-based Vulkan generator
+// emits for VkXFlags too).
 vma_fixups :: () {
+    Members := context.generator.global_scope.members;
+
+    // Every VMA enum carries a *_MAX_ENUM = 0x7FFFFFFF sentinel that only exists to
+    // pin the C storage size. Dropping it here rather than in the visitor keeps the
+    // detected enum prefixes (and so every other member's name) exactly as they are.
+    for Member : Members {
+        if Member.kind != .ENUM continue;
+        for (cast(*Enum) Member).enumerates {
+            if ends_with(it.name, "_MAX_ENUM") it.decl_flags |= .OMIT_FROM_OUTPUT;
+        }
+    }
+
+    for Alias : Members {
+        if Alias.kind != .TYPEDEF || !ends_with(Alias.name, "Flags") continue;
+
+        Base := Alias.name;
+        Base.count -= "Flags".count;
+        BitsName := tprint("%FlagBits", Base);
+
+        for Members {
+            if it.kind == .ENUM && it.name == BitsName {
+                Alias.type = create_type_of_enum(xx it);
+                break;
+            }
+        }
+    }
 }
 
 //
@@ -222,10 +253,10 @@ build_vma_libraries :: (TargetOs: Operating_System_Tag, TargetCpu: CPU_Tag) -> b
     }
 }
 
-
 #import "Bindings_Generator";
 #import "File";
 #import "File_Utilities";
 #import "BuildCpp";
 #import "Android/Toolchain";
 #if OS == .WINDOWS Win :: #import "Windows";
+

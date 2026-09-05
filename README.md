@@ -108,7 +108,10 @@ module is included alongside Vulkan. It is optional: if you only want Vulkan,
 copy `Vulkan.jai` and ignore the rest.
 
 To use it, copy the whole `VkMemAlloc` directory into your modules folder and
-`#import "VkMemAlloc";`. It imports `Vulkan`, so both need to be there.
+`#import "VkMemAlloc";`. It imports `Vulkan`, so both need to be there and in the same directory.
+
+If you move `Vulkan.jai` to a different module directory or name, you'll need to
+change the import at the end of `vma_<platform>.jai`.
 
 VMA is C++, so the module ships a prebuilt library per platform. Nothing needs
 to sit next to your executable on Linux, macOS or Windows; on Android the `.so`
