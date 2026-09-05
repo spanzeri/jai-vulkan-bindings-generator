@@ -36,6 +36,11 @@ Those work similarly to volk and should be familiar to Vulkan developers.
 
 However, you should only need the 3 functions above in 99% of cases.
 
+> [!WARNING]
+> `#import "Vulkan";` will conflict with the built-in module from the compiler.
+> If you are using custom import directories, make sure they precede the built-in
+> one.
+
 ## Enumerate/get wrappers
 
 The generated module also includes wrappers for the `vkEnumerate*` and `vkGet*`
@@ -108,7 +113,7 @@ module is included alongside Vulkan. It is optional: if you only want Vulkan,
 copy `Vulkan.jai` and ignore the rest.
 
 To use it, copy the whole `VkMemAlloc` directory into your modules folder and
-`#import "VkMemAlloc";`. It imports `Vulkan`, so both need to be there and in the same directory.
+`#import "VkMemAlloc";`.
 
 If you move `Vulkan.jai` to a different module directory or name, you'll need to
 change the import at the end of `vma_<platform>.jai`.

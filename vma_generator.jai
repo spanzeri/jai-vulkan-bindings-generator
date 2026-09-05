@@ -81,11 +81,6 @@ generate_vma_bindings :: (TargetOs := OS, TargetCpu := CPU) -> bool {
 
         // Force the callaback for macros to get called
         array_add(*generate_enums_from_macros_with_prefixes, "NOT_A_REAL_MACRO_BUT_WE_NEED_ONE");
-
-        footer = tprint(#string __imports
-#scope_file;
-#import,file "../Vulkan.jai";
-        __imports);
     }
 
     BindingName: string;

@@ -2460,6 +2460,3 @@ vmaFreeStatsString :: (allocator: VmaAllocator, pStatsString: *u8) -> void #fore
         assert(size_of(VmaVirtualAllocationInfo) == 24, "VmaVirtualAllocationInfo has size % instead of 24", size_of(VmaVirtualAllocationInfo));
     }
 }
-
-#scope_file;
-#import,file "../Vulkan.jai";
